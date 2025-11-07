@@ -1,15 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
-    "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
+    "outDir": "./dist",
+ 
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "types": ["node"],
+ 
+    "sourceMap": true,
+    "declaration": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "sourceMap": true
+    "allowSyntheticDefaultImports": true,
+ 
+    "strict": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "test"]
+  "exclude": ["node_modules"]
 }
