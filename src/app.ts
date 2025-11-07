@@ -6,7 +6,8 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-
+import { sequelize } from "./config/database";
+import "./models"; // Load all models
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 4000;
@@ -81,9 +82,24 @@ class App {
       process.on(name, handler);
     });
   }
+  private startServer = async () => {
+    try {
+      await sequelize.authenticate();
+      console.log("✅ Database connected successfully.");
+
+      // This will sync all defined models to DB
+      await sequelize.sync({ alter: true });
+      console.log("✅ Models synchronized.");
+
+    } catch (error) {
+      console.error("❌ Unable to connect to the database:", error);
+    }
+  };
+
 
   /** Start the HTTP server */
   public start(): void {
+    this.startServer();
     this.server = this.app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });

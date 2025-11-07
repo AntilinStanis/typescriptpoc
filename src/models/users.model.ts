@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../config/db";
+import { sequelize } from "../config/database";
 
-export class UserEntity extends Model {
+export class User extends Model {
   declare id: number;
   declare is_superadmin: boolean;
   declare email: string;
@@ -17,7 +17,7 @@ export class UserEntity extends Model {
   declare modifiedAt: Date;
 }
 
-UserEntity.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
