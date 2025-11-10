@@ -6,8 +6,8 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import { sequelize } from "./config/database";
 import "./models"; // Load all models
+import { Database } from "./database";
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 4000;
@@ -31,7 +31,7 @@ class App {
   }
 
   private initializeRoutes(): void {
-    this.app.get("/ping", (req, res: Response) => {
+    this.app.get("/ping", (req: Request, res: Response) => {
       res.status(200).send("Application running successfully");
     });
   }
@@ -47,7 +47,7 @@ class App {
     signals.forEach((eachSignal: NodeJS.Signals) => {
       process.once(eachSignal, async() => {
         console.log(`Process ${process.pid} received a ${eachSignal} signal`);
-        //need to close db connection
+        await Database.close();
         await new Promise<void>((resolve, reject) => {
           this.server!.close((err) => {
             if(err) reject(err);
@@ -82,27 +82,13 @@ class App {
       process.on(name, handler);
     });
   }
-  private startServer = async () => {
-    try {
-      await sequelize.authenticate();
-      console.log("✅ Database connected successfully.");
-
-      // This will sync all defined models to DB
-      await sequelize.sync({ alter: true });
-      console.log("✅ Models synchronized.");
-
-    } catch (error) {
-      console.error("❌ Unable to connect to the database:", error);
-    }
-  };
-
 
   /** Start the HTTP server */
-  public start(): void {
-    this.startServer();
+  public async start(): Promise<void> {
     this.server = this.app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
+    await Database.connect().catch((error) => console.log('Error in connecting database - ' + error.message));
   }
 }
 
