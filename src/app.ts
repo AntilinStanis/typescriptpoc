@@ -1,13 +1,13 @@
 /**
  * Main application entry point.
  * Initializes Express, configures middlewares, and starts the server.
- */
+ */ 
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import "./models"; // Load all models
 import { Database } from "./database";
+import { registerRoutes } from "./routes";
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 4000;
@@ -19,7 +19,6 @@ class App {
   constructor() {
     this.app = express();
     this.initializeMiddlewares();
-    this.initializeRoutes();
     this.handleOSSignals();
     this.handleProcessEvents();
   }
@@ -28,12 +27,6 @@ class App {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(morgan("dev"));
-  }
-
-  private initializeRoutes(): void {
-    this.app.get("/ping", (req: Request, res: Response) => {
-      res.status(200).send("Application running successfully");
-    });
   }
 
   private async shutdown(exitCode: number): Promise<void> {
@@ -85,10 +78,11 @@ class App {
 
   /** Start the HTTP server */
   public async start(): Promise<void> {
+    await Database.connect().catch((error) => console.log('Error in connecting database - ' + error.message));
+    await registerRoutes(this.app);
     this.server = this.app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
-    await Database.connect().catch((error) => console.log('Error in connecting database - ' + error.message));
   }
 }
 
