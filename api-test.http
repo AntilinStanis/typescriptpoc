@@ -1,0 +1,7 @@
+GET http://localhost:4000/ping
+###
+POST http://localhost:4000/v1/admin/signup
+###
+GET http://localhost:4000/exception
+###
+GET http://localhost:4000/rejection

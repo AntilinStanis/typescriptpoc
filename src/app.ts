@@ -8,6 +8,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { Database } from "./database";
 import { registerRoutes } from "./routes";
+import "./globalFunction";
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 4000;
