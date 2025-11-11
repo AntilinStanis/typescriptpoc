@@ -6,4 +6,5 @@ export async function registerRoutes(app: Application): Promise<void> {
     res.status(200).send("Application running successfully");
   });
   app.use("/v1/admin", new AuthController()?.router);
+  app.use("/v1/:storeId", new AuthController()?.router);
 }
